@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3498DB</color>
+    <color name="colorPrimaryDark">#3498DB</color>
+    <color name="textColorPrimary">#555555</color>
+    <color name="windowBackground">#F6F6F6</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorAccent">#c8e8ff</color>
+
+    <color name="darkGrayColor">#555555</color>
+    <color name="lightGrayColor">#AAAAAA</color>
+    <color name="mainColor">#3498DB</color>
+    <color name="failColor">#E60000</color>
+    <color name="successColor">#0f9200</color>
+
+    <color name="bnecFirst">#0f9200</color>
+    <color name="bnecSecond">#933614</color>
+    <color name="bnecThird">#733A99</color>
+    <color name="bnecFourth">#AA0D50</color>
+
+</resources>

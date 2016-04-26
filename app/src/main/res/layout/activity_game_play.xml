@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="ole.com.bnecchampion.GamePlayActivity">
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/mainColor">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="left">
+
+
+                <ImageView android:layout_height="0dp" android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/question"
+                    android:layout_gravity="center_horizontal|"
+                    android:layout_marginTop="4dp"
+                    />
+                <TextView
+                    android:id="@+id/tvQuestion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginLeft="2dp"
+                    android:text="36"
+                    android:textColor="#ffffff"
+                    android:textSize="36sp"
+                    android:layout_gravity="center_horizontal"/>
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tvCountdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="30"
+                android:textColor="@color/bnecSecond"
+                android:textSize="44sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="right">
+
+
+                <ImageView android:layout_height="0dp" android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/achievement"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
+                    />
+            <TextView
+                android:id="@+id/tvScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="2dp"
+                android:text="3630"
+                android:textColor="#ffffff"
+                android:textSize="36sp"
+                android:layout_gravity="center_horizontal"/>
+
+
+            </LinearLayout>
+
+
+        </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/panelTips"
+            android:layout_below="@+id/frameLayout"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp" />
+
+        <LinearLayout
+            android:id="@+id/panelTips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="false"
+            android:background="@color/bnecFourth"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:padding="2dp">
+
+            <ImageView android:layout_height="40dp" android:layout_width="36dp"
+                android:src="@drawable/idea"
+                android:id="@+id/imageIdea"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                />
+
+            <TextView
+                android:id="@+id/tvHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginLeft="4dp"
+                android:singleLine="false"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
