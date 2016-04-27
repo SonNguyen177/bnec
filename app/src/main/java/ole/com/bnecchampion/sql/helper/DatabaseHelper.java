@@ -255,7 +255,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_WORD, word.getWord());
         values.put(KEY_PRONOUN, word.getPronoun());
         values.put(KEY_DESCRIPTION, word.getDescription());
-        values.put(KEY_IS_CORRECT, word.getWord());
+        if(word.isCorrect()){
+            values.put(KEY_IS_CORRECT, 1);
+        }else{
+            values.put(KEY_IS_CORRECT, 0);
+        }
+
         values.put(KEY_QUESTION_ID, questionID); // FK
 
         // insert row
