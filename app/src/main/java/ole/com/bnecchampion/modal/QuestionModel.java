@@ -99,7 +99,9 @@ public class QuestionModel {
             // explaining
             retVal.setExplaining(components[8]);
 
-            retVal.setAuthor(components[9]);
+            String author = components[9];
+            author = author.substring(0,author.length() -1); // ignore "
+            retVal.setAuthor(author);
 
         }catch (Exception ex){
             Log.e("PARSE_CSV", "error when parse a csv row");
