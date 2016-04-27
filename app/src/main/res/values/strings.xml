@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">BNEC</string>
     <string name="hint">Hint:</string>
+    <string name="explain">explains: </string>
+    <string name="great_alert">Great! You\'ve earned %1$d score(s) for the question. </string>
+    <string name="cool_alert">So cool! You\'ve earned %1$d score(s) for the question.</string>
+    <string name="sorry_alert">Oops! You\'ve almost got it. </string>
 </resources>
