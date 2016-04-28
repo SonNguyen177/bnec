@@ -12,6 +12,7 @@
     <color name="mainColor">#3498DB</color>
     <color name="failColor">#E60000</color>
     <color name="successColor">#0f9200</color>
+    <color name="warningColor">#FF9900</color>
 
     <color name="bnecFirst">#0f9200</color>
     <color name="bnecSecond">#933614</color>

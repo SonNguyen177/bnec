@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG = "DatabaseHelper";
 
     // Database Version
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     // Database Name
     private static final String DATABASE_NAME = "bnec";
@@ -90,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // creating required tables
         db.execSQL(CREATE_TABLE_QUESTION);
         db.execSQL(CREATE_TABLE_WORD);
-        db.execSQL(CREATE_TABLE_ACHIEVEMENT);
+       // db.execSQL(CREATE_TABLE_ACHIEVEMENT);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORD);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACHIEVEMENT);
+       // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACHIEVEMENT);
 
         // create new tables
         onCreate(db);
@@ -138,6 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // insert row
         long questionId = db.insert(TABLE_QUESTION, null, values);
+        Log.e(LOG, "INSERT A QUESTION WITH ID = " + questionId);
 
         // assigning words for question
         for (Word w : words) {

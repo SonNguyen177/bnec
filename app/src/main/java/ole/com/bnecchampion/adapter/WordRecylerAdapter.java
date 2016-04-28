@@ -179,6 +179,7 @@ public class WordRecylerAdapter extends RecyclerView.Adapter<WordRecylerAdapter.
 
             try {
                 ButterKnife.bind(this, itemView);
+
             }catch (Exception ex){
                 ex.printStackTrace();
             }

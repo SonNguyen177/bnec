@@ -22,7 +22,7 @@ import ole.com.bnecchampion.sql.helper.DatabaseHelper;
  */
 public class SpashScreenActivity extends Activity {
 
-    long SPLASH_TIME = 3000;
+    long SPLASH_TIME = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +59,19 @@ public class SpashScreenActivity extends Activity {
                 List<String[]> questionList = csvFile.read();
 
                 // delete first
-                db.deleteQuestion(1);
-                db.deleteQuestion(2);
+                //db.deleteQuestion(1);
+                //db.deleteQuestion(2);
 
-                for (String[] components: questionList) {
+                List<QuestionModel> existQuestions =  db.getAllQuestions();
+
+                for(int i = existQuestions.size(); i< questionList.size(); i++){
+                    String[] components = questionList.get(i);
+
                     QuestionModel q = QuestionModel.parse(components);
 
                     //  create a question
 
                     long qId = db.createQuestion(q);
-
                 }
 
                 //

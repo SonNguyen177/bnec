@@ -1,21 +1,25 @@
 package ole.com.bnecchampion;
 
+import android.animation.Animator;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ole.com.bnecchampion.adapter.WordRecylerAdapter;
+import ole.com.bnecchampion.modal.AchievementModel;
 import ole.com.bnecchampion.modal.QuestionModel;
 import ole.com.bnecchampion.modal.WordModel;
 import ole.com.bnecchampion.sql.entity.Question;
@@ -41,10 +46,13 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @Bind(R.id.tvQuestion)
     TextView tvQuestion;
+
     @Bind(R.id.tvCountdown)
     TextView tvCountdown;
+
     @Bind(R.id.tvScore)
     TextView tvScore;
+
     @Bind(R.id.tvHint)
     TextView tvHint;
 
@@ -57,6 +65,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @Bind(R.id.imageIdea)
     ImageView imageIcon;
+
+    @Bind(R.id.fabPlay)
+    FloatingActionButton fabPlay;
+
+    Snackbar snackbar;
 
     List<QuestionModel> questionSet;
     QuestionModel questionData;
@@ -73,6 +86,9 @@ public class GamePlayActivity extends AppCompatActivity {
     // Database Helper
     DatabaseHelper db;
 
+    AchievementModel achievementModel;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +96,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
         // bind
         ButterKnife.bind(this);
+
+//        MaterialRippleLayout.on(getcon)
+//                .rippleColor(Color.BLACK)
+//                .create();
 
         optionSelectedIdx = new ArrayList();
 
@@ -104,6 +124,22 @@ public class GamePlayActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new WordRecylerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
+
+//                // itemView.setElevation(20.0f);
+//
+//                // get the center for the clipping circle
+//                int cx = itemView.getWidth() / 2;
+//                int cy = itemView.getHeight() / 2;
+//
+//// get the final radius for the clipping circle
+//                float finalRadius = (float) Math.hypot(cx, cy);
+//
+//// create the animator for this view (the start radius is zero)
+//                Animator anim = ViewAnimationUtils.createCircularReveal(itemView, cx, cy, 0, finalRadius);
+//
+//// make the view visible and start the animation
+//               // itemView.setVisibility(View.VISIBLE);
+//                anim.start();
 
                 // test show hint
                 if (optionSelectedIdx.size() == 2) {
@@ -162,10 +198,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
             public void onTick(long millisUntilFinished) {
                 secondLeft = millisUntilFinished / 1000;
+                fabPlay.setEnabled(false);
 
                 if (secondLeft < 10) {
                     tvCountdown.setText("0" + Long.toString((secondLeft)));
-                    //  tvCountdown.setTextColor(getResources().getColor(R.color.bnecFourth));
+                    tvCountdown.setTextColor(getResources().getColor(R.color.failColor));
                 } else {
                     tvCountdown.setText(Long.toString((secondLeft)));
                 }
@@ -192,12 +229,40 @@ public class GamePlayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if (isRight) {
+                    Toast.makeText(GamePlayActivity.this, "Share your score!", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // show right answer
+                    // Toast.makeText(GamePlayActivity.this, "Share your score!", Toast.LENGTH_SHORT).show();
+                    for (WordModel w : questionData.getOptions()) {
+                        if (w.isCorrect()) {
+                            w.setStatus(WordModel.MATCHED);
+                        } else {
+                            w.setStatus(WordModel.NORMAL);
+                        }
+                    }
+                    // refresh
+                    adapter.notifyDataSetChanged();
+                }
             }
         };
 
         //
+        panelTips.setAlpha(0);
+
+        // show last result
+        // test only
+        achievementModel = new AchievementModel();
+
+
+        //achievementModel =  getAchievement();
+
+        showAchievement();
+
         getCurrentQuestion();
     }
+
 
     private void showHint(int idx) {
         // panelTips.setVisibility(View.VISIBLE);
@@ -220,7 +285,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
             // explain
             if (questionData.getExplaining().length() > 0) {
-                sb.append("\n" + questionData.getAuthor() + R.string.explain + "\n" + questionData.getExplaining());
+                sb.append("\n" + getResources().getString(R.string.explain) + "\n" + questionData.getExplaining());
             }
             sb.append("\n" + "-- Thank you, " + questionData.getAuthor() + " --");
             tvHint.setText(sb.toString());
@@ -243,7 +308,7 @@ public class GamePlayActivity extends AppCompatActivity {
         secondLeft = 30;
         isRight = false;
         optionSelectedIdx.clear();
-        tvCountdown.setTextColor(Color.WHITE);
+        tvCountdown.setTextColor(getResources().getColor(R.color.warningColor));
         //  tvCountdown.setTextColor(getResources().getColor(R.color.bnecThird));
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_countdown);
         tvCountdown.startAnimation(animation);
@@ -264,23 +329,28 @@ public class GamePlayActivity extends AppCompatActivity {
         // Finish question
         // 1. Show result match word
         // 2. Show all hint, author explain
-        // 3. Show dialog result & Next / Stop float button bar
+        // 3. Show result & Play float button bar
         // 4. Record score, save data
 
         countDownTimer.cancel();
         tvCountdown.clearAnimation();
         imageIcon.clearAnimation();
+        fabPlay.setEnabled(true);
 
         // 1.
-        for (WordModel w : questionData.getOptions()) {
-            if (w.isCorrect()) {
-                w.setStatus(WordModel.MATCHED);
-            } else {
-                w.setStatus(WordModel.NORMAL);
-            }
-        }
-        // refresh
-        adapter.notifyDataSetChanged();
+        // disable select :
+        optionSelectedIdx.clear();
+        optionSelectedIdx.add("0");
+        optionSelectedIdx.add("0");
+//        for (WordModel w : questionData.getOptions()) {
+//            if (w.isCorrect()) {
+//                w.setStatus(WordModel.MATCHED);
+//            } else {
+//                w.setStatus(WordModel.NORMAL);
+//            }
+//        }
+//        // refresh
+//        adapter.notifyDataSetChanged();
 
         // 2.
         showHint(SHOW_ALL_HINT);
@@ -289,50 +359,74 @@ public class GamePlayActivity extends AppCompatActivity {
         panelFloatButton.setAlpha(0.7f);
         if (isRight) {
             //
+            String strFormat;
+            if (secondLeft >= 20) {
+                strFormat = getResources().getString(R.string.great_alert);
+            } else if (secondLeft >= 10) {
+                strFormat = getResources().getString(R.string.cool_alert);
+            } else {
+                strFormat = getResources().getString(R.string.good_alert);
+            }
 
-            String strFormat = getResources().getString(R.string.great_alert);
             String strMsg = String.format(strFormat, secondLeft);
 
-            Snackbar snackbar = Snackbar.make(coordinatorLayout,strMsg , Snackbar.LENGTH_LONG);
+            snackbar = Snackbar.make(coordinatorLayout, strMsg, Snackbar.LENGTH_LONG);
             // snackbar.setDuration(5000); // 9 seconds
-            //.setAction("Undo", mOnClickListener);
-//            snackbar.setActionTextColor(getResources().getColor(R.color.bnecFirst));
-//            View snackbarView = snackbar.getView();
-//            snackbarView.setBackgroundColor(getResources().getColor(R.color.bnecFourth));
-//            TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-//            textView.setTextColor(Color.WHITE);
+            snackbar.setAction(getResources().getString(R.string.share), mOnClickListener);
+            snackbar.setActionTextColor(getResources().getColor(R.color.bnecFourth));
+            View snackbarView = snackbar.getView();
+            snackbarView.setBackgroundColor(getResources().getColor(R.color.bnecFirst));
+            TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(Color.WHITE);
             snackbar.show();
         } else {
-
+            snackbar = Snackbar.make(coordinatorLayout, getResources().getString(R.string.sorry_alert), Snackbar.LENGTH_LONG);
+            snackbar.setAction(getResources().getString(R.string.result), mOnClickListener);
+            snackbar.show();
         }
 
         // 4.
-    }
 
-    private void showFloatButton() {
+        achievementModel.setQuestionPass(achievementModel.getQuestionPass() + 1);
 
+        if (isRight) {
+            achievementModel.setTotalScore(achievementModel.getTotalScore() + (int) secondLeft);
+        } else {
+            achievementModel.setTotalFailed(achievementModel.getTotalFailed() + 1);
+        }
+        // save
+        saveAchievement(achievementModel);
+        showAchievement();
     }
 
     @OnClick(R.id.fabPlay)
     public void playAction() {
-        Toast.makeText(this, "Play", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Play", Toast.LENGTH_SHORT).show();
+
+        if (snackbar != null) {
+            snackbar.dismiss();
+        }
+        getCurrentQuestion();
     }
 
-//    @OnClick(R.id.fabStop)
-//    public void stopAction(){
-//        Toast.makeText(this,"Stop",Toast.LENGTH_SHORT).show();
-//    }
-
-    private void showResultDialog() {
-
-    }
 
     private void showAchievement() {
+        String questionStr;
+        if (achievementModel.getQuestionPass() < 10) {
+            questionStr = "0" + achievementModel.getQuestionPass();
+        } else {
+            questionStr = "" + achievementModel.getQuestionPass();
+        }
+        tvQuestion.setText(questionStr);
 
-    }
-
-    private void saveAchievement() {
-
+        //
+        String scoreStr;
+        if (achievementModel.getTotalScore() < 100) {
+            scoreStr = "0" + achievementModel.getTotalScore();
+        } else {
+            scoreStr = "" + achievementModel.getTotalScore();
+        }
+        tvScore.setText(scoreStr);
     }
 
     private void getCurrentQuestion() {
@@ -340,13 +434,50 @@ public class GamePlayActivity extends AppCompatActivity {
             db = new DatabaseHelper(getApplicationContext());
         }
         questionSet = db.getAllQuestions();
+        int nextQuestion = achievementModel.getQuestionPass();
 
-        questionData = questionSet.get(0);// test with first
+        if (nextQuestion >= questionSet.size()) {
+            Toast.makeText(this, getResources().getString(R.string.end_question_set), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        questionData = questionSet.get(nextQuestion);
 
         db.closeDB();
 
         // show question
         showQuestion();
     }
+
+    //region Achievement
+
+    public AchievementModel getAchievement() {
+        AchievementModel retVal;
+        SharedPreferences sharedPref = GamePlayActivity.this.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        int defaultValue = 0;
+
+        int questionPassed = sharedPref.getInt(AchievementModel.QUESTION_PASSED, defaultValue);
+        int totalScore = sharedPref.getInt(AchievementModel.TOTAL_SCORE, defaultValue);
+        int totalFailed = sharedPref.getInt(AchievementModel.TOTAL_FAILED, defaultValue);
+
+        retVal = new AchievementModel(questionPassed, totalScore, totalFailed);
+
+        return retVal;
+    }
+
+    public void saveAchievement(AchievementModel info) {
+        SharedPreferences sharedPref = GamePlayActivity.this.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(AchievementModel.QUESTION_PASSED, info.getQuestionPass());
+        editor.putInt(AchievementModel.TOTAL_SCORE, info.getTotalScore());
+        editor.putInt(AchievementModel.TOTAL_FAILED, info.getTotalFailed());
+        editor.commit();
+
+    }
+    //endregion
 
 }
