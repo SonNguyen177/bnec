@@ -26,6 +26,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.drakeet.materialdialog.MaterialDialog;
 import ole.com.bnecchampion.adapter.WordRecylerAdapter;
 import ole.com.bnecchampion.modal.AchievementModel;
 import ole.com.bnecchampion.modal.QuestionModel;
@@ -70,6 +71,7 @@ public class GamePlayActivity extends AppCompatActivity {
     FloatingActionButton fabPlay;
 
     Snackbar snackbar;
+    MaterialDialog mMaterialDialog;
 
     List<QuestionModel> questionSet;
     QuestionModel questionData;
@@ -231,6 +233,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                 if (isRight) {
                     Toast.makeText(GamePlayActivity.this, "Share your score!", Toast.LENGTH_SHORT).show();
+                    mMaterialDialog.dismiss();
                 } else {
 
                     // show right answer
@@ -244,6 +247,7 @@ public class GamePlayActivity extends AppCompatActivity {
                     }
                     // refresh
                     adapter.notifyDataSetChanged();
+                    mMaterialDialog.dismiss();
                 }
             }
         };
@@ -370,19 +374,45 @@ public class GamePlayActivity extends AppCompatActivity {
 
             String strMsg = String.format(strFormat, secondLeft);
 
-            snackbar = Snackbar.make(coordinatorLayout, strMsg, Snackbar.LENGTH_LONG);
-            // snackbar.setDuration(5000); // 9 seconds
-            snackbar.setAction(getResources().getString(R.string.share), mOnClickListener);
-            snackbar.setActionTextColor(getResources().getColor(R.color.bnecFourth));
-            View snackbarView = snackbar.getView();
-            snackbarView.setBackgroundColor(getResources().getColor(R.color.bnecFirst));
-            TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.WHITE);
-            snackbar.show();
+//            snackbar = Snackbar.make(coordinatorLayout, strMsg, Snackbar.LENGTH_LONG);
+//            // snackbar.setDuration(5000); // 9 seconds
+//            snackbar.setAction(getResources().getString(R.string.share), mOnClickListener);
+//            snackbar.setActionTextColor(getResources().getColor(R.color.bnecFourth));
+//            View snackbarView = snackbar.getView();
+//            snackbarView.setBackgroundColor(getResources().getColor(R.color.bnecFirst));
+//            TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+//            textView.setTextColor(Color.WHITE);
+//            snackbar.show();
+
+             mMaterialDialog = new MaterialDialog(this)
+                    .setTitle(getResources().getString(R.string.congratulation))
+                    .setMessage(strMsg)
+                    .setPositiveButton(getResources().getString(R.string.share), mOnClickListener)
+                    .setNegativeButton(getResources().getString(R.string.cancel), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mMaterialDialog.dismiss();
+                        }
+                    });
+
+            mMaterialDialog.show();
         } else {
-            snackbar = Snackbar.make(coordinatorLayout, getResources().getString(R.string.sorry_alert), Snackbar.LENGTH_LONG);
-            snackbar.setAction(getResources().getString(R.string.result), mOnClickListener);
-            snackbar.show();
+//            snackbar = Snackbar.make(coordinatorLayout, getResources().getString(R.string.sorry_alert), Snackbar.LENGTH_LONG);
+//            snackbar.setAction(getResources().getString(R.string.result), mOnClickListener);
+//            snackbar.show();
+
+            mMaterialDialog = new MaterialDialog(this)
+                    .setTitle(getResources().getString(R.string.let_try))
+                    .setMessage(getResources().getString(R.string.sorry_alert))
+                    .setPositiveButton(getResources().getString(R.string.result), mOnClickListener)
+                    .setNegativeButton(getResources().getString(R.string.cancel), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mMaterialDialog.dismiss();
+                        }
+                    });
+
+            mMaterialDialog.show();
         }
 
         // 4.
@@ -403,9 +433,9 @@ public class GamePlayActivity extends AppCompatActivity {
     public void playAction() {
         //Toast.makeText(this, "Play", Toast.LENGTH_SHORT).show();
 
-        if (snackbar != null) {
-            snackbar.dismiss();
-        }
+//        if (snackbar != null) {
+//            snackbar.dismiss();
+//        }
         getCurrentQuestion();
     }
 
@@ -433,7 +463,9 @@ public class GamePlayActivity extends AppCompatActivity {
         if (db == null) {
             db = new DatabaseHelper(getApplicationContext());
         }
-        questionSet = db.getAllQuestions();
+        if(questionSet == null) {
+            questionSet = db.getAllQuestions();
+        }
         int nextQuestion = achievementModel.getQuestionPass();
 
         if (nextQuestion >= questionSet.size()) {

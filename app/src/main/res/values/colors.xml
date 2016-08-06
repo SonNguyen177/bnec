@@ -5,7 +5,9 @@
     <color name="textColorPrimary">#555555</color>
     <color name="windowBackground">#F6F6F6</color>
     <color name="navigationBarColor">#000000</color>
-    <color name="colorAccent">#c8e8ff</color>
+    <!--<color name="colorAccent">#c8e8ff</color>-->
+
+    <color name="colorAccent">#AA0D50</color>
 
     <color name="darkGrayColor">#555555</color>
     <color name="lightGrayColor">#AAAAAA</color>
